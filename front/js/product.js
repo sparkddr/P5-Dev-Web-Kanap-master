@@ -40,6 +40,17 @@ const panier = document.querySelector("#addToCart");
 panier.addEventListener("click", function (event) {
   //On récupère les infos de quantité et de couleurs
 
+  addBasket();
+});
+
+//Fonction pour récupérer le panier
+function getBasket() {
+  let basket = JSON.parse(localStorage.getItem("panier"));
+  return basket;
+}
+
+//Fonction pour ajouter au panier
+function addBasket() {
   let color = document.querySelector("#colors").value;
   let itemQuantity = document.querySelector("#quantity").value;
   let article = {
@@ -51,22 +62,22 @@ panier.addEventListener("click", function (event) {
   let tableauStorage = [];
   let finalArray;
   //On récupère le panier dans le local Storage pour comparer les éléments déja présents
-  let panierLinea = localStorage.getItem("panier");
-  let panier = JSON.parse(panierLinea);
+  let panier = getBasket();
   //On vérifie si le panier existe
   if (panier !== null) {
     //On regarde si l'ID est présent dans le panier
-    let verifId = panier.filter((e) => e.id === idArticle).length > 0;
-    console.log(verifId);
-    if (verifId) {
-      //Si l'ID est présent on rajoute seulement la quantité
-      let idIndex = panier.findIndex((obj) => obj.id == idArticle);
-      let quantityAdjustement = 0;
-      quantityAdjustement += Number(panier[idIndex].quantity);
-      quantityAdjustement += Number(itemQuantity);
-      panier[idIndex].quantity = quantityAdjustement;
-      console.log(panier);
-      console.log("sucess");
+    let verifId = panier.filter((e) => e.id === idArticle);
+    if (verifId != undefined) {
+      let verifColor = verifId.find((p) => p.couleur == color);
+      console.log(verifColor);
+      if (verifColor != undefined) {
+        let quantityAdjustement = 0;
+        quantityAdjustement += Number(verifColor.quantity);
+        quantityAdjustement += Number(itemQuantity);
+        verifColor.quantity = quantityAdjustement;
+      } else {
+        tableauStorage.push(article);
+      }
     } else {
       //Si l'ID n'est pas présent on ajoute l'objet entier au tableau
       tableauStorage.push(article);
@@ -79,9 +90,7 @@ panier.addEventListener("click", function (event) {
     finalArray = tableauStorage;
   }
   console.log(finalArray);
-  //On met le tableau en objet Json
-  let finalArrayLinea = JSON.stringify(finalArray);
 
-  //On met lobjet JSon dans le local Storage
-  localStorage.setItem("panier", finalArrayLinea);
-});
+  //On met lobjet JSon dans le local Storage (en JSON)
+  localStorage.setItem("panier", JSON.stringify(finalArray));
+}
