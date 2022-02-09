@@ -36,23 +36,6 @@ fetch(`http://localhost:3000/api/products/${idArticle}`)
 
 /////////Ajout d'un produit au panier///////
 
-/*const panier = document.querySelector("#addToCart");
-panier.addEventListener("click", function (event) {
-  let color = document.querySelector("#colors").value;
-  let itemQuantity = document.querySelector("#quantity").value;
-  let item = {"couleur" :`${color}` , "quantity" : `${itemQuantity}` , "id": `${idArticle}`};
-  console.log(item);
-  
-  let cartItemLinea = JSON.stringify(item);
-  localStorage.setItem("article",cartItemLinea)
-  localStorage.setItem("couleur", array)
-  console.log(localStorage);
-  console.log(localStorage.length);
-  
-});*/
-
-localStorage.clear();
-
 const panier = document.querySelector("#addToCart");
 panier.addEventListener("click", function (event) {
   //On récupère les infos de quantité et de couleurs
@@ -69,13 +52,12 @@ panier.addEventListener("click", function (event) {
   let finalArray;
   //On récupère le panier dans le local Storage pour comparer les éléments déja présents
   let panierLinea = localStorage.getItem("panier");
-  console.log(panierLinea);
   let panier = JSON.parse(panierLinea);
-  console.log(panier);
   //On vérifie si le panier existe
   if (panier !== null) {
     //On regarde si l'ID est présent dans le panier
     let verifId = panier.filter((e) => e.id === idArticle).length > 0;
+    console.log(verifId);
     if (verifId) {
       //Si l'ID est présent on rajoute seulement la quantité
       let idIndex = panier.findIndex((obj) => obj.id == idArticle);
