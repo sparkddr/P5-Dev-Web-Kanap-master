@@ -59,7 +59,8 @@ function addBasket() {
     quantity: itemQuantity,
     id: idArticle,
   };
-
+  //On vérifie que des données sont bien entrée par le client
+  if (color !== "" && itemQuantity > 0){
   //On récupère le panier dans le local Storage pour comparer les éléments déja présents
   let panier = getBasket();
   //On vérifie si le panier existe
@@ -92,4 +93,4 @@ function addBasket() {
   }
   //On met lobjet JSon dans le local Storage (en JSON)
   localStorage.setItem("panier", JSON.stringify(panier));
-}
+}}
