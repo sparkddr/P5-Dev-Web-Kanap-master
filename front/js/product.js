@@ -51,6 +51,7 @@ function getBasket() {
 
 //Fonction pour ajouter au panier
 function addBasket() {
+    //On récupère les infos du produits
   let color = document.querySelector("#colors").value;
   let itemQuantity = document.querySelector("#quantity").value;
   let article = {
@@ -58,39 +59,37 @@ function addBasket() {
     quantity: itemQuantity,
     id: idArticle,
   };
-  //On crée un tableau pour entreposer les objets et un tableau final qui sera utilisé pour pusher sur le local storage
-  let tableauStorage = [];
-  let finalArray;
+
   //On récupère le panier dans le local Storage pour comparer les éléments déja présents
   let panier = getBasket();
   //On vérifie si le panier existe
   if (panier !== null) {
     //On regarde si l'ID est présent dans le panier
     let verifId = panier.filter((e) => e.id === idArticle);
-    if (verifId != undefined) {
+    console.log("verifID", verifId);
+    if (verifId.length > 0) {
+      //On regarde si la couleur est présente dans le panier
       let verifColor = verifId.find((p) => p.couleur == color);
-      console.log(verifColor);
+      console.log("verifcolor", verifColor);
       if (verifColor != undefined) {
         let quantityAdjustement = 0;
         quantityAdjustement += Number(verifColor.quantity);
         quantityAdjustement += Number(itemQuantity);
         verifColor.quantity = quantityAdjustement;
       } else {
-        tableauStorage.push(article);
+        //Si l'ID+ mais couleur- on push l'objet entier au tableau
+        panier.push(article);
       }
     } else {
       //Si l'ID n'est pas présent on ajoute l'objet entier au tableau
-      tableauStorage.push(article);
+      panier.push(article);
     }
-    //On fusionne les différents paniers dans le panier final
-    finalArray = tableauStorage.concat(panier);
-    //Si le panier n'existe pas on rajoute simplement l'objet dans notre tableau local puis final
+    //Si le panier n'existe pas on crée le tableau panier et on push l'article
   } else {
-    tableauStorage.push(article);
-    finalArray = tableauStorage;
+    panier = [];
+    panier.push(article);
+    console.log("panier", panier);
   }
-  console.log(finalArray);
-
   //On met lobjet JSon dans le local Storage (en JSON)
-  localStorage.setItem("panier", JSON.stringify(finalArray));
+  localStorage.setItem("panier", JSON.stringify(panier));
 }
