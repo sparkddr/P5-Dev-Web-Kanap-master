@@ -89,7 +89,6 @@ function addBasket() {
   } else {
     panier = [];
     panier.push(article);
-    console.log("panier", panier);
   }
   //On met lobjet JSon dans le local Storage (en JSON)
   localStorage.setItem("panier", JSON.stringify(panier));
