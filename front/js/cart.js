@@ -1,5 +1,6 @@
 let api;
 
+
 fetch("http://localhost:3000/api/products")
   .then(function (res) {
     if (res.ok) {
@@ -12,23 +13,22 @@ fetch("http://localhost:3000/api/products")
     //Affichage du panier
     cartDisplay(api, panier);
     //Ajout de la quantité et du prix dans le DOM
-    document.querySelector("#totalQuantity").innerHTML =
-      getTotalQuantity(panier);
-    document.querySelector("#totalPrice").innerHTML = getTotalPrice(
-      panier,
-      api
-    );
+    updatePriceQuantity(panier, api)
+  })
+  .then(()=>{
+    removeItem();
+    modifyQuantity()
   })
   .catch(function (err) {
     //Une erreur est survenue
   });
 
 //Supprimer avec le bouton supprimer
-setTimeout(function removeItem() {
+function removeItem() {
   let buttonsDelete = document.querySelectorAll(".deleteItem");
   for (let button of buttonsDelete) {
     button.addEventListener("click", function () {
-      panier = getBasket();
+      let panier = getBasket();
       //On récupère l'ID de la donnée modifiée
       let idItem = this.closest(".cart__item").dataset.id;
       //On récupère la couleur de la donnée modifiée
@@ -37,19 +37,18 @@ setTimeout(function removeItem() {
     });
   }
   //On cherche l'index dans le panier
-}, 400);
+}
 
 //Fonction permettant de modifier le nombre d'éléments dans le panier
-setTimeout(modifyQuantity, 400);
 function modifyQuantity() {
   let quantityInCart = document.querySelectorAll(".itemQuantity");
   for (let input of quantityInCart) {
     input.addEventListener("change", function () {
       let panier = getBasket();
       //On récupère l'ID de la donnée modifiée
-      idItem = this.closest(".cart__item").dataset.id;
+      let idItem = this.closest(".cart__item").dataset.id;
       //On récupère la couleur de la donnée modifiée
-      colorItem = this.closest(".cart__item").dataset.color;
+      let colorItem = this.closest(".cart__item").dataset.color;
       //On récupère le bon iD dans le panier
       let findId = panier.filter((e) => e.id === idItem);
       //Puis on récupère la couleur
@@ -112,7 +111,6 @@ function cartDisplay(api, panier) {
 //Fonction pour supprimer un élément du panier
 function removeBasket(idItem, colorItem, panier) {
   //Suppression de l'affichage
-  console.log(colorItem);
   let elementToRemove = document.querySelector(
     `article[data-id="${idItem}"][data-color="${colorItem}"]`
   );
@@ -154,8 +152,8 @@ function getTotalPrice(panier, api) {
 
 //Fonction pour udpate l'affichage du prix et de la quantité
 function updatePriceQuantity(panier, api) {
-  document.querySelector("#totalQuantity").innerHTML = getTotalQuantity(panier);
-  document.querySelector("#totalPrice").innerHTML = getTotalPrice(panier, api);
+  document.querySelector("#totalQuantity").textContent = getTotalQuantity(panier);
+  document.querySelector("#totalPrice").textContent = getTotalPrice(panier, api);
 }
 
 ////////////////////Création des RegExp pour validation du formulaire////////////
