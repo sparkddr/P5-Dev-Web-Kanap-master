@@ -1,6 +1,5 @@
 let api;
 
-
 fetch("http://localhost:3000/api/products")
   .then(function (res) {
     if (res.ok) {
@@ -13,11 +12,11 @@ fetch("http://localhost:3000/api/products")
     //Affichage du panier
     cartDisplay(api, panier);
     //Ajout de la quantité et du prix dans le DOM
-    updatePriceQuantity(panier, api)
+    updatePriceQuantity(panier, api);
   })
-  .then(()=>{
+  .then(() => {
     removeItem();
-    modifyQuantity()
+    modifyQuantity();
   })
   .catch(function (err) {
     //Une erreur est survenue
@@ -75,9 +74,9 @@ function getBasket() {
 //Fonction pour l'affichage du panier
 function cartDisplay(api, panier) {
   let fragment = document.createDocumentFragment();
-  for (article of panier) {
+  for (let article of panier) {
     //On retrouve dans l'API l'article correspondant au local storage
-    itemApi = api.find((p) => p._id == article.id);
+    let itemApi = api.find((p) => p._id == article.id);
     //On modifie dans le DOM
     let choice = document.createElement("article");
     choice.setAttribute("class", "cart__item");
@@ -134,7 +133,7 @@ function removeBasket(idItem, colorItem, panier) {
 //Fonction pour récupérer le nombre d'éléments du panier
 function getTotalQuantity(panier) {
   let quantity = 0;
-  for (article of panier) {
+  for (let article of panier) {
     quantity += Number(article.quantity);
   }
   return quantity;
@@ -142,9 +141,10 @@ function getTotalQuantity(panier) {
 
 //Fonction pour calculer le prix total du panier
 function getTotalPrice(panier, api) {
-  itemApi = api.find((p) => p._id == article.id);
+  ;
   let price = 0;
-  for (article of panier) {
+  for (let article of panier) {
+    let itemApi = api.find((p) => p._id == article.id)
     price += Number(article.quantity) * Number(itemApi.price);
   }
   return price;
@@ -152,102 +152,103 @@ function getTotalPrice(panier, api) {
 
 //Fonction pour udpate l'affichage du prix et de la quantité
 function updatePriceQuantity(panier, api) {
-  document.querySelector("#totalQuantity").textContent = getTotalQuantity(panier);
-  document.querySelector("#totalPrice").textContent = getTotalPrice(panier, api);
+  document.querySelector("#totalQuantity").textContent =
+    getTotalQuantity(panier);
+  document.querySelector("#totalPrice").textContent = getTotalPrice(
+    panier,
+    api
+  );
 }
 
-////////////////////Création des RegExp pour validation du formulaire////////////
+////////////////////Validation du formulaire////////////
 
 let form = document.querySelector(".cart__order__form");
-
-//On crée une promise
-const validation = new Promise(function(resolve,reject){
-  resolve('sucess');
-  reject('echec')
-})
-validation
-  .then(function(){
+function validation(){
+  try{
     //On écoute la modification de l'email
-form.email.addEventListener("change", function () {
-  validEmail(this);
-});
-//On écoute la modification du prénom
-form.firstName.addEventListener("change", function () {
-  validName(this);
-});
-//On écoute la modif du nom
-form.lastName.addEventListener("change", function () {
-  validName(this);
-});
-//On écoute la modif de l'adresse
-form.address.addEventListener("change", function () {
-  validAddress(this);
-});
-//On écoute la modif de la Ville
-form.city.addEventListener("change", function () {
-  validName(this);
-});
-    commander()
-  })
-  .catch(function(data){
-    console.log(data);
-  })
-//Validation avec Bouton Commander
-function commander(){
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
-  console.log(form.firstName.value);
-  if (
-    validName(form.firstName) &&
-    validName(form.lastName) &&
-    validName(form.city) &&
-    validAddress(form.address) &&
-    validEmail(form.email)
-  ) {
-    let contact = {
-      firstName: form.firstName.value,
-      lastName: form.lastName.value,
-      city: form.city.value,
-      address: form.address.value,
-      email: form.email.value,
-    };
-    let panier = getBasket();
-    let products = [];
-    for (let article of panier) {
-      products.push(article.id);
-    }
-    let command = { contact: contact, products: products };
-    console.log(command);
-
-    fetch("http://localhost:3000/api/products/order", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(command),
-    })
-      .then(function (res) {
-        console.log(res);
-        return res.json();
-      })
-      .then(function (value) {
-        console.log(value);
-        return value.orderId;
-      })
-      .then(function (orderId) {
-        window.location.href = "confirmation.html?" + `id=${orderId}`;
-        localStorage.clear()
-        return orderId;
-      })
-      .catch(function (error) {
-        // catch
-        console.log("Request failed", error);
-      });
+    form.email.addEventListener("change", function () {
+      validEmail(this);
+    });
+    //On écoute la modification du prénom
+    form.firstName.addEventListener("change", function () {
+      validName(this);
+    });
+    //On écoute la modif du nom
+    form.lastName.addEventListener("change", function () {
+      validName(this);
+    });
+    //On écoute la modif de l'adresse
+    form.address.addEventListener("change", function () {
+      validAddress(this);
+    });
+    //On écoute la modif de la Ville
+    form.city.addEventListener("change", function () {
+      validName(this);
+    });
+    commander();
+  }catch (error){
+    console.log("Page confirmation");
   }
-});}
+}
+validation()
 
+//Validation avec Bouton Commander
+function commander() {
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    console.log(form.firstName.value);
+    if (
+      validName(form.firstName) &&
+      validName(form.lastName) &&
+      validName(form.city) &&
+      validAddress(form.address) &&
+      validEmail(form.email)
+    ) {
+      let contact = {
+        firstName: form.firstName.value,
+        lastName: form.lastName.value,
+        city: form.city.value,
+        address: form.address.value,
+        email: form.email.value,
+      };
+      let panier = getBasket();
+      let products = [];
+      for (let article of panier) {
+        products.push(article.id);
+      }
+      let command = { contact: contact, products: products };
+      sendApi(command);
+    }
+  });
+}
 
+function sendApi(command) {
+  fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(command),
+  })
+    .then(function (res) {
+      return res.json();
+    })
+    .then(function (value) {
+      return value.orderId;
+    })
+    .then(function (orderId) {
+      window.location.href = "confirmation.html?" + `id=${orderId}`;
+      localStorage.clear();
+      return orderId;
+    })
+    .catch(function (error) {
+      // catch
+      console.log("Request failed", error);
+    });
+}
+
+/////////********REGEXP POUR VALIDATION*************///////////
 //Fonction Validation Nom
 function validName(inputName) {
   //Création Regexp validation email
@@ -256,10 +257,10 @@ function validName(inputName) {
   //On récupère le paragraphe pour afficher le résultat
   let message = inputName.nextElementSibling;
   if (!testName) {
-    message.innerHTML = "Renseignement Non Valide";
+    message.textContent = "Renseignement Non Valide";
     return false;
   } else {
-    message.innerHTML = "";
+    message.textContent = "";
     return true;
   }
 }
@@ -271,10 +272,10 @@ function validAddress(inputAddress) {
   //On récupère le paragraphe pour afficher le résultat
   let message = inputAddress.nextElementSibling;
   if (!testAddress) {
-    message.innerHTML = "Renseignement Non Valide";
+    message.textContent = "Renseignement Non Valide";
     return false;
   } else {
-    message.innerHTML = "";
+    message.textContent = "";
     return true;
   }
 }
@@ -290,28 +291,22 @@ function validEmail(inputEmail) {
   //On récupère le paragraphe pour afficher le résultat
   let message = inputEmail.nextElementSibling;
   if (!testEmail) {
-    message.innerHTML = "Adresse Non Valide";
+    message.textContent = "Adresse Non Valide";
     return false;
   } else {
-    message.innerHTML = "";
+    message.textContent = "";
     return true;
   }
 }
 
-///Affichage ID Commande page confirmation
+//////*********** Affichage ID Commande page confirmation **********///////////
 
 //On récupère l'ID
-
-const idOrder = new Promise(function (resolve, reject) {
-  resolve("success");
-  reject("echec");
-});
-idOrder
-  .then(function () {
-    let url = new URL(window.location.href);
-    let idArticle = url.searchParams.get("id");
-    document.querySelector("#orderId").innerHTML = idArticle;
-  })
-  .catch(function(data){
-    console.log(data);
-  })
+function idPage() {
+  let url = new URL(window.location.href);
+  let idArticle = url.searchParams.get("id");
+  if (idArticle != undefined) {
+    document.querySelector("#orderId").textContent = idArticle;
+  }
+}
+idPage();
