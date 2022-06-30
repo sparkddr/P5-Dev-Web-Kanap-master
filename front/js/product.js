@@ -17,7 +17,7 @@ fetch(`http://localhost:3000/api/products/${idArticle}`)
     pagination(value);
   })
   .catch(function (err) {
-    //Une erreur est survenue
+    console.log(err);
   });
 
 //Fonction pour la mise en page
